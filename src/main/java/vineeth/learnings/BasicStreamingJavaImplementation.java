@@ -23,9 +23,10 @@ public class BasicStreamingJavaImplementation {
 	public static void main(String[] args){
 	
 		String query = "Explain Azure Devops in layman terms with 5 sentences";
+		String systemMessage = " You're Devops expert, answer the queries accordingly..";
 		
-		generateStreamingResponse(query);
-		generateNormalResponse(query);
+		generateStreamingResponse(systemMessage,query);
+		generateNormalResponse(systemMessage,query);
 
 	}
 	
@@ -33,10 +34,11 @@ public class BasicStreamingJavaImplementation {
 	 * Basic streaming explanation
 	 * @param query
 	 */
-	static void generateStreamingResponse(String query){
+	static void generateStreamingResponse(String systemMessage, String query){
 		
 		ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
 															.model(OpenAIModelList.LunaModel)
+															.addSystemMessage(systemMessage)
 															.addUserMessage(query)
 															.build();
 		
@@ -59,18 +61,19 @@ public class BasicStreamingJavaImplementation {
 	 * Normal response method for reference
 	 * @param query
 	 */
-	static void generateNormalResponse(String query) {
+	static void generateNormalResponse(String systemMessage, String query) {
 
 			//Creating request params
 			ResponseCreateParams params = ResponseCreateParams
 			        							.builder()
+			        							.instructions(systemMessage)
 			        							.input(query)
 			        							.model(OpenAIModelList.LunaModel)
 			        							.build();
 				
 			Response response = client.responses().create(params);
 				
-			System.out.println("\n Printing all at once..\n");
+			System.out.println("\nPrinting all at once..\n");
 			//flattening the nested output
 			response.output().stream()
 		       .flatMap(item -> item.message().stream())
