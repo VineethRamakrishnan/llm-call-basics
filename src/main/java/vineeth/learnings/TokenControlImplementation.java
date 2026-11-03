@@ -9,7 +9,7 @@ import com.openai.models.completions.CompletionUsage;
 import vineeth.learnings.constants.OpenAIModelList;
 
 /**
- * This class demonstrates the control over the token
+ * This class demonstrates the control over the token  OpenAI SDK
  * 		a. Limiting the output thru maxtoken
  * 		b. Getting the token usage - Input/output/Total
  * 
