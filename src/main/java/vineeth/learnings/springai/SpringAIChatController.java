@@ -44,6 +44,8 @@ public class SpringAIChatController {
 		 * FinishReason is important attribute to check when the AI answers not in align with the expectations
 		 * 	STOP : Normal flow
 		 *  LENGTH : The output been truncated due to token shortage, etc.
+		 *  TOOLCALLING
+		 *  CONTENT-FILTER
 		 *  
 		 * @param query
 		 * @return
