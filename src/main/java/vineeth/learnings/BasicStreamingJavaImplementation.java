@@ -21,18 +21,23 @@ public class BasicStreamingJavaImplementation {
 	static OpenAIClient client = OpenAIOkHttpClient.fromEnv();
 	
 	public static void main(String[] args){
+	
+		String query = "Explain Azure Devops in layman terms with 5 sentences";
 		
-		generateStreamingResponse();
-		generateNormalResponse();
+		generateStreamingResponse(query);
+		generateNormalResponse(query);
 
 	}
 	
-	static void generateStreamingResponse(){
+	/**
+	 * Basic streaming explanation
+	 * @param query
+	 */
+	static void generateStreamingResponse(String query){
 		
 		ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
 															.model(OpenAIModelList.LunaModel)
-															.addSystemMessage("You're devops expert and answer accoringly")
-															.addUserMessage("Explain Azure Devops in layman terms with 5 sentences")
+															.addUserMessage(query)
 															.build();
 		
 		System.out.println("Printing as and when it arrives...\n");
@@ -49,12 +54,17 @@ public class BasicStreamingJavaImplementation {
 		System.out.println("\n=======================================");
 	}
 	
-	static void generateNormalResponse() {
+	
+	/**
+	 * Normal response method for reference
+	 * @param query
+	 */
+	static void generateNormalResponse(String query) {
 
 			//Creating request params
 			ResponseCreateParams params = ResponseCreateParams
 			        							.builder()
-			        							.input("Explain Azure Devops in layman terms with 5 sentences")
+			        							.input(query)
 			        							.model(OpenAIModelList.LunaModel)
 			        							.build();
 				
