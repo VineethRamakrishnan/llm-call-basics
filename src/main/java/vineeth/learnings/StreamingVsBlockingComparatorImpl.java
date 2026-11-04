@@ -83,13 +83,18 @@ public class StreamingVsBlockingComparatorImpl {
 		//try with resources
 		try(StreamResponse<ChatCompletionChunk> completionchunks = client.chat().completions().createStreaming(params)){
 			
+			//Calculating the first text streaming time
+			if(firstTextAtStreaming == 0) {
+				firstTextAtStreaming = System.currentTimeMillis() - startTime;
+			}
+			
 			completionchunks.stream()
 				.flatMap(chunk -> chunk.choices().stream())
 				.flatMap(choice -> choice.delta().content().stream())
 				.forEach(text -> {
-					if(firstTextAtStreaming == 0) {
-						firstTextAtStreaming = System.currentTimeMillis() - startTime;
-					}
+//					if(firstTextAtStreaming == 0) {
+//						firstTextAtStreaming = System.currentTimeMillis() - startTime;
+//					}
 					
 					System.out.print(text);
 				});
