@@ -81,7 +81,5 @@ public class StreamingLanChain4JImplementation {
 	    System.out.println("Finish reason      : " + response.finishReason());
 	    System.out.println("Input tokens       : " + usage.inputTokenCount());
 	    System.out.println("Output tokens      : " + usage.outputTokenCount());
-		
 	}
-
 }
