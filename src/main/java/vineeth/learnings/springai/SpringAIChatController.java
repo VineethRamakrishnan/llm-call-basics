@@ -7,10 +7,13 @@ import org.springframework.ai.chat.metadata.Usage;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import reactor.core.publisher.Flux;
 
 /**
  * This class to demonstrate the basic building blocks - finishReason, streaming, etc.
@@ -87,6 +90,32 @@ public class SpringAIChatController {
 				Integer outputTokens,
 				Integer totalTokens
 				) {}
+		
+		
+		@GetMapping("/chat/blockmode")
+		public String chatInBlockMode(@RequestParam String query) {
+			
+			System.out.println("We have received the request to chat with block mode");
+			return chatClient.prompt()
+							.user(query)
+							.call()
+							.content();
+		}
+		
+		
+		/**
+		 * Streaming implementation
+		 */
+		
+		@GetMapping(value = "chat/streammode",
+				produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+		public Flux<String> chatInStreamingMode(@RequestParam String query){
+			
+			return chatClient.prompt()
+							.user(query)
+							.stream()
+							.content();
+		}
 }
 
 
