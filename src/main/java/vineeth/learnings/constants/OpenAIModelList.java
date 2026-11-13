@@ -1,5 +1,7 @@
 package vineeth.learnings.constants;
 
+#Model list containing the open AI models
+
 public class OpenAIModelList {
 
 	public static String LunaModel = "gpt-5.6-luna";
