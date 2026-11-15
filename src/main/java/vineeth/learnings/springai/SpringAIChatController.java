@@ -104,10 +104,10 @@ public class SpringAIChatController {
 		
 		
 		/**
-		 * Streaming implementation
+		 * Streaming implementation - ONLY getting the text output
 		 */
 		
-		@GetMapping(value = "chat/streammode",
+		@GetMapping(value = "chat/stream",
 				produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 		public Flux<String> chatInStreamingMode(@RequestParam String query){
 			
@@ -115,6 +115,59 @@ public class SpringAIChatController {
 							.user(query)
 							.stream()
 							.content();
+		}
+		
+		@GetMapping("chat/stream-usage")
+		public Flux<String> chatInStreamingModeWithMetadata(@RequestParam String query){
+			
+			StringBuilder fullAnswer = new StringBuilder();
+			
+			return chatClient.prompt()
+							.user(query)
+							.stream()
+							.chatResponse()		//Important API to get metadata as well
+							.map(chunk -> {
+				
+		    	            		String text = "";
+		    	            		if(chunk.getResult() != null &&
+		    	            				chunk.getResult().getOutput() != null &&
+		    	            				chunk.getResult().getOutput().getText() != null) {
+		    	            			
+		    	            				//Extract the text from the chunk and append it
+		    	            				text = chunk.getResult().getOutput().getText();
+		    	            				fullAnswer.append(text);
+		    	            			}
+		    	            		
+		    	            		ChatResponseMetadata metadata = chunk.getMetadata();
+		    	            		Usage usage = metadata.getUsage();
+		    	            		
+		    	            		//Appending text with metadata
+		    	            		if(metadata != null &&
+		    	            				usage != null &&
+		    	            				usage.getPromptTokens() !=null &&
+		    	            				usage.getCompletionTokens() != null &&
+		    	            				usage.getTotalTokens() > 0) {
+		    	            			
+		    	            			System.out.println("Inside metadata computation"); 		//only once and for the final chunk these data would be present
+		    	            			
+		    	            				return text
+		    	            						  + "\n\n===== METADATA ====="
+		    	                                      + "\nResponse ID: " + metadata.getId()
+		    	                                      + "\nModel: " + metadata.getModel()
+		    	                                      + "\nInput Tokens: " + usage.getPromptTokens()
+		    	                                      + "\nOutput Tokens: " + usage.getCompletionTokens()
+		    	                                      + "\nTotal Tokens: " + usage.getTotalTokens()
+		    	                                      + "\n====================";
+		    	            			}
+		    	            		
+		    	            		return text;
+							})
+							.filter(text -> !text.isEmpty())
+							.doOnComplete(() -> {
+								System.out.println("\nFull Answer ::");
+								System.out.println(fullAnswer);
+								System.out.println(fullAnswer.length());
+							});
 		}
 }
 
